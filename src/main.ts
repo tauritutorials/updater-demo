@@ -1,22 +1,52 @@
-import { invoke } from "@tauri-apps/api/core";
+import { check } from "@tauri-apps/plugin-updater";
+import { relaunch } from "@tauri-apps/plugin-process";
 
-let greetInputEl: HTMLInputElement | null;
-let greetMsgEl: HTMLElement | null;
+window.addEventListener("DOMContentLoaded", async () => {
+    const update = await check();
+    if (update) {
+        let container = document.querySelector("#update-available");
 
-async function greet() {
-  if (greetMsgEl && greetInputEl) {
-    // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-    greetMsgEl.textContent = await invoke("greet", {
-      name: greetInputEl.value,
-    });
-  }
-}
+        if (container) {
+            container.innerHTML = `
+                <p>Update available ${update.version}</p>
+                <p>from ${update.date}</p>
+                <p>patch notes:</p>
+                <p>from ${update.body}</p>
 
-window.addEventListener("DOMContentLoaded", () => {
-  greetInputEl = document.querySelector("#greet-input");
-  greetMsgEl = document.querySelector("#greet-msg");
-  document.querySelector("#greet-form")?.addEventListener("submit", (e) => {
-    e.preventDefault();
-    greet();
-  });
+                <button id="installUpdate">Install Update</button>
+            `;
+
+            document.querySelector("#installUpdate")?.addEventListener("click", () => {
+                installUpdate();
+            });
+        }
+    }
+
+    async function installUpdate() {
+        let downloaded = 0;
+        let contentLength = 0;
+
+        await update.downloadAndInstall((event: any) => {
+            switch (event.event) {
+                case "Started":
+                    contentLength = event.data.contentLength;
+                    console.log(
+                        `started downloading ${event.data.contentLength} bytes`,
+                    );
+                    break;
+                case "Progress":
+                    downloaded += event.data.chunkLength;
+                    console.log(
+                        `downloaded ${downloaded} from ${contentLength}`,
+                    );
+                    break;
+                case "Finished":
+                    console.log("download finished");
+                    break;
+            }
+        });
+
+        console.log("update installed");
+        await relaunch();
+    }
 });
