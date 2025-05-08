@@ -4,9 +4,9 @@
   "version": "0.1.0",
   "identifier": "com.updater-demo.app",
   "build": {
-    "beforeDevCommand": "bun run dev",
+    "beforeDevCommand": "npm run dev",
     "devUrl": "http://localhost:1420",
-    "beforeBuildCommand": "bun run build",
+    "beforeBuildCommand": "npm run build",
     "frontendDist": "../dist"
   },
   "app": {
@@ -23,6 +23,7 @@
     }
   },
   "bundle": {
+    "createUpdaterArtifacts": true,
     "active": true,
     "targets": "all",
     "icon": [
@@ -32,5 +33,11 @@
       "icons/icon.icns",
       "icons/icon.ico"
     ]
+  },
+  "plugins": {
+    "updater": {
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEJDQ0I2QjEwRkQxMzFCM0YKUldRL0d4UDlFR3ZMdkRRUzE1b3ArNHhZc1pEaE9QVnpZeS8xRzltNlBKaGMrTHZXdmdWNGdreDQK",
+      "endpoints": ["https://github.com/tauritutorials/updater-demo/releases/latest/download/latest.json"]
+    }
   }
 }

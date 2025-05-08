@@ -26,7 +26,7 @@ window.addEventListener("DOMContentLoaded", async () => {
         let downloaded = 0;
         let contentLength = 0;
 
-        await update.downloadAndInstall((event: any) => {
+        await update?.downloadAndInstall((event: any) => {
             switch (event.event) {
                 case "Started":
                     contentLength = event.data.contentLength;
